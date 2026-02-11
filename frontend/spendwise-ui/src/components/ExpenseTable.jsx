@@ -67,7 +67,7 @@ export default function ExpenseTable({ expenses, onRefresh }) {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-text-primary text-sm">
-                  {new Date(expense.date).toLocaleDateString()}
+                  {new Date(expense.expenseDate).toLocaleDateString()}
                 </td>
                 <td className="px-6 py-4 flex gap-2">
                   <button

@@ -20,7 +20,7 @@ export default function AddExpense() {
     title: '',
     amount: '',
     category: 'Food & Dining',
-    date: new Date().toISOString().split('T')[0],
+    expenseDate: new Date().toISOString().split('T')[0],
     note: '',
   });
   const [loading, setLoading] = useState(false);
@@ -129,8 +129,8 @@ export default function AddExpense() {
           <label className="block text-text-primary text-sm font-medium mb-2">Date *</label>
           <input
             type="date"
-            name="date"
-            value={formData.date}
+            name="expenseDate"
+            value={formData.expenseDate}
             onChange={handleChange}
             required
             className="w-full bg-secondary-bg border border-gray-700 rounded-lg px-4 py-3 text-text-primary focus:outline-none focus:border-accent transition"

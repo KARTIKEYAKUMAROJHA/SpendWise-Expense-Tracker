@@ -35,7 +35,7 @@ public class ExpenseService {
 
     public List<ExpenseDTO> getAllExpenses() {
         User user = getCurrentUser();
-        return expenseRepository.findByUserOrderByDateDesc(user)
+        return expenseRepository.findByUserOrderByExpenseDateDesc(user)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -60,7 +60,7 @@ public class ExpenseService {
         expense.setTitle(expenseDTO.getTitle());
         expense.setAmount(expenseDTO.getAmount());
         expense.setCategory(expenseDTO.getCategory());
-        expense.setDate(expenseDTO.getDate());
+        expense.setExpenseDate(expenseDTO.getExpenseDate());
         expense.setNote(expenseDTO.getNote());
         expense.setUser(user);
 
@@ -80,7 +80,7 @@ public class ExpenseService {
         expense.setTitle(expenseDTO.getTitle());
         expense.setAmount(expenseDTO.getAmount());
         expense.setCategory(expenseDTO.getCategory());
-        expense.setDate(expenseDTO.getDate());
+        expense.setExpenseDate(expenseDTO.getExpenseDate());
         expense.setNote(expenseDTO.getNote());
 
         Expense updatedExpense = expenseRepository.save(expense);
@@ -101,7 +101,7 @@ public class ExpenseService {
 
     public DashboardStats getDashboardStats() {
         User user = getCurrentUser();
-        List<Expense> allExpenses = expenseRepository.findByUserOrderByDateDesc(user);
+        List<Expense> allExpenses = expenseRepository.findByUserOrderByExpenseDateDesc(user);
 
         BigDecimal totalExpense = allExpenses.stream()
                 .map(Expense::getAmount)
@@ -109,7 +109,7 @@ public class ExpenseService {
 
         LocalDate now = LocalDate.now();
         BigDecimal monthlyExpense = allExpenses.stream()
-                .filter(e -> e.getDate().getYear() == now.getYear() && e.getDate().getMonthValue() == now.getMonthValue())
+                .filter(e -> e.getExpenseDate().getYear() == now.getYear() && e.getExpenseDate().getMonthValue() == now.getMonthValue())
                 .map(Expense::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -123,7 +123,7 @@ public class ExpenseService {
 
     public List<CategoryWiseTotal> getCategoryWiseTotal() {
         User user = getCurrentUser();
-        List<Expense> expenses = expenseRepository.findByUserOrderByDateDesc(user);
+        List<Expense> expenses = expenseRepository.findByUserOrderByExpenseDateDesc(user);
 
         Map<String, BigDecimal> categoryTotals = expenses.stream()
                 .collect(Collectors.groupingBy(
@@ -138,11 +138,11 @@ public class ExpenseService {
 
     public List<MonthlySummary> getMonthlySummary() {
         User user = getCurrentUser();
-        List<Expense> expenses = expenseRepository.findByUserOrderByDateDesc(user);
+        List<Expense> expenses = expenseRepository.findByUserOrderByExpenseDateDesc(user);
 
         Map<YearMonth, BigDecimal> monthlySummary = expenses.stream()
                 .collect(Collectors.groupingBy(
-                        e -> YearMonth.from(e.getDate()),
+                        e -> YearMonth.from(e.getExpenseDate()),
                         Collectors.reducing(BigDecimal.ZERO, Expense::getAmount, BigDecimal::add)
                 ));
 
@@ -161,7 +161,7 @@ public class ExpenseService {
                 expense.getTitle(),
                 expense.getAmount(),
                 expense.getCategory(),
-                expense.getDate(),
+                expense.getExpenseDate(),
                 expense.getNote()
         );
     }
