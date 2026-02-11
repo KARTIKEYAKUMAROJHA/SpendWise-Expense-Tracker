@@ -36,11 +36,11 @@ public class JwtTokenProvider {
     public String getEmailFromToken(String token) {
         Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
 
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
+        Claims claims = Jwts.parser()
+                .verifyWith((javax.crypto.SecretKey) key)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
 
         return claims.getSubject();
     }
@@ -49,10 +49,10 @@ public class JwtTokenProvider {
         try {
             Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
 
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
+            Jwts.parser()
+                    .verifyWith((javax.crypto.SecretKey) key)
                     .build()
-                    .parseClaimsJws(token);
+                    .parseSignedClaims(token);
 
             return true;
         } catch (Exception e) {
